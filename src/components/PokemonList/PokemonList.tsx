@@ -1,29 +1,40 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useGetPokemons } from '../../hooks/useGetPokemons';
 import { Link, useParams } from 'react-router-dom';
 import { PokemonDetailsModal } from '../PokemonList/PokemonDetailsModal';
 
-export const PokemonList = () => {
+interface Pokemon {
+  id: string;
+  name: string;
+  image: string;
+  number: number;
+  types: string[];
+}
+
+export const PokemonList: React.FC = () => {
   const classes = useStyles();
   const { pokemons, loading, error: fetchError } = useGetPokemons();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [error, setError] = useState(null);
-  const { id } = useParams();
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+  const { id } = useParams<{ id: string }>();
 
-  const handleChange = (e) => {
-    try {
-      const value = e.target.value.trim(); // Trim the input value
-      setSearchTerm(value);
-      setError(null); // Reset the error state if previously set
-    } catch (err) {
-      setError('An error occurred while processing your input.'); // Set error if needed
-    }
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      try {
+        const value = e.target.value.trim(); // Trim the input value
+        setSearchTerm(value);
+        setError(null); // Reset the error state if previously set
+      } catch (err) {
+        setError('An error occurred while processing your input.'); // Set error if needed
+      }
+    },
+    [setSearchTerm, setError]
+  );
 
   // Use useMemo to memoize the filtered list of Pokémon
   const filteredPokemons = useMemo(() => {
-    return pokemons.filter((pkmn) =>
+    return pokemons.filter((pkmn: Pokemon) =>
       pkmn.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [pokemons, searchTerm]);
@@ -44,7 +55,7 @@ export const PokemonList = () => {
         <div>No Pokémon found for "{searchTerm}"</div>
       )}
       <div className={classes.pokemonGrid}>
-        {filteredPokemons.map((pkmn) => (
+        {filteredPokemons.map((pkmn: Pokemon) => (
           <Link to={`/pokemon/${pkmn.id}`} key={pkmn.id} className={classes.pokemonLink}>
             <div className={classes.pokemonItem}>
               <img src={pkmn.image} alt={pkmn.name} className={classes.pokemonImage} />
