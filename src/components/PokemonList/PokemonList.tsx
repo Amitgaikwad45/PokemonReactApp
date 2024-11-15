@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useGetPokemons } from '../../hooks/useGetPokemons';
 import { Link, useParams } from 'react-router-dom';
@@ -6,13 +6,27 @@ import { PokemonDetailsModal } from '../PokemonList/PokemonDetailsModal';
 
 export const PokemonList = () => {
   const classes = useStyles();
-  const { pokemons, loading } = useGetPokemons();
+  const { pokemons, loading, error: fetchError } = useGetPokemons();
   const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState(null);
   const { id } = useParams();
 
-  const filteredPokemons = pokemons.filter((pkmn) =>
-    pkmn.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleChange = (e) => {
+    try {
+      const value = e.target.value.trim(); // Trim the input value
+      setSearchTerm(value);
+      setError(null); // Reset the error state if previously set
+    } catch (err) {
+      setError('An error occurred while processing your input.'); // Set error if needed
+    }
+  };
+
+  // Use useMemo to memoize the filtered list of Pokémon
+  const filteredPokemons = useMemo(() => {
+    return pokemons.filter((pkmn) =>
+      pkmn.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [pokemons, searchTerm]);
 
   return (
     <div className={classes.root}>
@@ -20,11 +34,13 @@ export const PokemonList = () => {
         type="text"
         placeholder="Search Pokémon..."
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={handleChange} // Use handleChange function
         className={classes.searchInput}
       />
+      {error && <div className={classes.error}>{error}</div>}
+      {fetchError && <div className={classes.error}>Failed to load Pokémon data.</div>}
       {loading && <div>Loading...</div>}
-      {!loading && filteredPokemons.length === 0 && (
+      {!loading && !error && filteredPokemons.length === 0 && (
         <div>No Pokémon found for "{searchTerm}"</div>
       )}
       <div className={classes.pokemonGrid}>
@@ -88,5 +104,10 @@ const useStyles = createUseStyles({
     width: '100px',
     height: '100px',
     marginBottom: '8px',
+  },
+  error: {
+    color: 'red',
+    fontWeight: 'bold',
+    margin: '16px 0',
   },
 });
