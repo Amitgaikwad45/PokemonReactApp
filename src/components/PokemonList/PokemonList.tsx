@@ -1,17 +1,8 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { createUseStyles } from 'react-jss';
-import { useGetPokemons } from '../../hooks/useGetPokemons';
+import { useGetPokemons,Pokemon } from '../../hooks/useGetPokemons';
 import { Link, useParams } from 'react-router-dom';
 import { PokemonDetailsModal } from '../PokemonList/PokemonDetailsModal';
-
-interface Pokemon {
-  id: string;
-  name: string;
-  image: string;
-  number: number;
-  types: string[];
-}
-
 export const PokemonList: React.FC = () => {
   const classes = useStyles();
   const { pokemons, loading, error: fetchError } = useGetPokemons();
