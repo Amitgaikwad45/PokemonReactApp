@@ -17,6 +17,10 @@ If you are developing a production application, we recommend updating the config
 - npm install
 - npm run dev
 
+## To run the tests run the command
+- npm run test
+
+
 ```js
 export default tseslint.config({
   languageOptions: {
