@@ -13,6 +13,10 @@ If you are developing a production application, we recommend updating the config
 
 - Configure the top-level `parserOptions` property like this:
 
+## To run the solution of the problem take clone from git and run the below commands
+- npm install
+- npm run dev
+
 ```js
 export default tseslint.config({
   languageOptions: {
