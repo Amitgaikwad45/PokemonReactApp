@@ -6,9 +6,6 @@ import { Nav } from '../components';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './client';
 import { ListPage, Home } from '../screens';
-import { PokemonDetailsModal } from '../components/PokemonList/PokemonDetailsModal';
-import { PokemonList } from '../components/PokemonList/PokemonList';
-
 
 
 function App() {
@@ -24,7 +21,6 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/pokemon/:id?" element={<ListPage />}  />
-                 {/* <Route path="/pokemon/:id" element={<PokemonDetailsModal />} /> */}
                 </Routes>
               </div>
             </div>
